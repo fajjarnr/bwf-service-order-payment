@@ -1,0 +1,53 @@
+version: '3.9'
+services:
+  app:
+    build:
+      context: .
+    image: fajjarnr/bwf-service-payment
+    container_name: bwf-service-payment
+    restart: always
+    tty: true
+    networks:
+      - service-payment-network
+  web_server:
+    build:
+      context: .
+      dockerfile: Docker/dockerfile/nginx.Dockerfile
+    image: fajjarnr/nginx-service-payment
+    container_name: nginx-service-payment
+    restart: always
+    tty: true
+    ports:
+      - "8001:80"
+    depends_on:
+      - app
+    networks:
+      - service-payment-network
+  mysql:
+    image: mysql
+    ports:
+      - 3306:3306
+    environment:
+      - MYSQL_ROOT_PASSWORD=password
+      - MYSQL_DATABASE=service-payment
+      - MYSQL_USER=admin
+      - MYSQL_PASSWORD=rahasia
+    volumes:
+      - service-payment-data:/var/lib/mysql
+  adminer:
+    image: adminer
+    container_name: adminer
+    ports:
+      - 8081:8080
+    depends_on:
+      - mysql
+    restart: always
+    networks:
+      - service-payment-network
+
+networks:
+  service-payment-network:
+
+volumes:
+  service-payment-data:
+    driver: local
