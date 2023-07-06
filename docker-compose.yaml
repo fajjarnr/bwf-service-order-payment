@@ -1,53 +1,30 @@
 version: '3.9'
 services:
   app:
-    build:
-      context: .
-    image: fajjarnr/bwf-service-payment
+    image: fajjarnr/bwf-micro-backend:service-payment
     container_name: bwf-service-payment
-    restart: always
-    tty: true
-    networks:
-      - service-payment-network
-  web_server:
-    build:
-      context: .
-      dockerfile: Docker/dockerfile/nginx.Dockerfile
-    image: fajjarnr/nginx-service-payment
-    container_name: nginx-service-payment
-    restart: always
-    tty: true
-    ports:
-      - "8001:80"
-    depends_on:
-      - app
-    networks:
-      - service-payment-network
-  mysql:
-    image: mysql
-    ports:
-      - 3306:3306
     environment:
-      - MYSQL_ROOT_PASSWORD=password
-      - MYSQL_DATABASE=service-payment
-      - MYSQL_USER=admin
-      - MYSQL_PASSWORD=rahasia
-    volumes:
-      - service-payment-data:/var/lib/mysql
-  adminer:
-    image: adminer
-    container_name: adminer
-    ports:
-      - 8081:8080
-    depends_on:
-      - mysql
+      - APP_NAME=service_payment
+      - APP_KEY=base64:cUPmwHx4LXa4Z25HhzFiWCf7TlQmSqnt98pnuiHmzgY=
+      - APP_URL=http://bwf-service-payment:8001
+      - DB_CONNECTION=mysql
+      - DB_HOST=bwf-micro.cyh0sfq8vv2a.ap-southeast-3.rds.amazonaws.com
+      - DB_PORT=3306
+      - DB_DATABASE=service_payment
+      - DB_USERNAME=admin
+      - DB_PASSWORD=rahasia123
+      - MIDTRANS_SERVER_KEY="Mid-server-osPlAQkCeW4BYz5_KP-gO7O-"
+      - MIDTRANS_CLIENT_KEY="Mid-client-ptBFVvqK12FuFSJd"
+      - MIDTRANS_IS_PRODUCTION=false
+      - MIDTRANS_IS_SANITIZED=false
+      - MIDTRANS_IS_3DS=true
+      - SERVICE_COURSE_URL=bwf-service-course
     restart: always
+    tty: true
+    ports:
+      - 8001:8001
     networks:
       - service-payment-network
 
 networks:
   service-payment-network:
-
-volumes:
-  service-payment-data:
-    driver: local
