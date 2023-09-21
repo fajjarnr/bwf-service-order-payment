@@ -1,0 +1,13 @@
+# File
+.git
+.env
+.env.*
+.idea
+.dockerignore
+composer.lock
+npm-debug.log
+
+# Direktori
+vendor/
+node_modules/
+public/storage/
