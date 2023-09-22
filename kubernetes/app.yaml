@@ -4,7 +4,7 @@ metadata:
   name: env-service-payment
   namespace: bwf
 data:
-  APP_NAME: "service_course"
+  APP_NAME: "service_payment"
   APP_KEY: "base64:6zrLF/wEs3hO4AlX+BReJ803ec4zR//FWEOz6ZSgYuw="
   APP_URL: http://bwf-service-order-payment
 
@@ -48,7 +48,46 @@ spec:
         - name: bwf-service-order-payment
           image: "fajjarnr/bwf-service-order-payment:latest"
           ports:
-            - containerPort: 8080
+            - containerPort: 8081
           envFrom:
             - configMapRef:
                 name: env-service-payment
+
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: bwf-service-order-payment
+  namespace: bwf
+  labels:
+    app: bwf-service-order-payment
+spec:
+  selector:
+    app: bwf-service-order-payment
+  ports:
+    - name: http
+      protocol: TCP
+      port: 8001
+      targetPort: 8001
+  type: ClusterIP
+
+---
+kind: Route
+apiVersion: route.openshift.io/v1
+metadata:
+  name: bwf-service-order-payment
+  namespace: bwf
+  labels:
+    app: bwf-service-order-payment
+spec:
+  host: bwf-service-order-payment-bwf.apps.ngb-rosa-prod.xpac.p1.openshiftapps.com
+  to:
+    kind: Service
+    name: bwf-service-order-payment
+    weight: 100
+  port:
+    targetPort: 8001
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: None
+  wildcardPolicy: None

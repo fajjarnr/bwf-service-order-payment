@@ -18,7 +18,7 @@ RUN docker-php-ext-install pdo_mysql
 
 RUN a2enmod rewrite
 
-RUN sed -i 's/Listen 80/Listen 8081/g' /etc/apache2/ports.conf
+RUN sed -i 's/Listen 80/Listen 8001/g' /etc/apache2/ports.conf
 
 COPY --from=build /app /var/www/html
 
@@ -28,6 +28,6 @@ RUN mkdir -p /var/www/html/bootstrap/cache \
     && chmod -R 777 /var/www/html/bootstrap/cache /var/www/html/storage/* \
     && chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 
-EXPOSE 8081
+EXPOSE 8001
 
 USER www-data
